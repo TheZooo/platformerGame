@@ -6,17 +6,17 @@ var xSpeed = 0; //x speed that changes
 var xSpeedCapMin = -5; //x speed cap MIN
 var xSpeedCapMax = 5; //x speed cap MAX
 var xInc = 0; //x increment in speed
-var xIncCap = 3; //cap when the increment happens
+var xIncCap = 2; //cap when the increment happens
 
 var ySpeed = 0;
-var ySpeedCap = -5;
+var ySpeedCap = -6;
 var yDec = 0;
-var yDecCap = 10;
+var yDecCap = 5;
 
 var gravity = 1;
 var gravityCap = 5;
 var gravityInc = 0;
-var gravityIncCap = 10;
+var gravityIncCap = 5;
 
 var player = new player(); //Player object
 
@@ -36,7 +36,7 @@ function draw() {
     player.moveY();
     player.border();
 
-    document.getElementById('dump').innerHTML = ySpeed + " " + gravity;
+    //document.getElementById('dump').innerHTML = yDec + " " + yDecCap;
 }
 
 function player() {
