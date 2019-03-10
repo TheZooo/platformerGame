@@ -1,11 +1,22 @@
 var w = window.innerWidth; //Window Width
 var h = window.innerHeight; //Window Height
 var playerSize = 20; //Player Size
+
 var xSpeed = 0; //x speed that changes
 var xSpeedCapMin = -5; //x speed cap MIN
 var xSpeedCapMax = 5; //x speed cap MAX
 var xInc = 0; //x increment in speed
 var xIncCap = 3; //cap when the increment happens
+
+var ySpeed = 0;
+var ySpeedCap = -5;
+var yDec = 0;
+var yDecCap = 10;
+
+var gravity = 1;
+var gravityCap = 5;
+var gravityInc = 0;
+var gravityIncCap = 10;
 
 var player = new player(); //Player object
 
@@ -22,8 +33,10 @@ function draw() {
 
     player.display();
     player.moveX();
+    player.moveY();
+    player.border();
 
-    document.getElementById('dump').innerHTML = xSpeed + " " + xInc;
+    document.getElementById('dump').innerHTML = ySpeed + " " + gravity;
 }
 
 function player() {
@@ -34,23 +47,6 @@ function player() {
         strokeWeight(1);
         fill(48, 136, 36);
         rect(this.x, this.y, playerSize, playerSize);
-        //--------------------------Borders--------------------------
-        if (this.x > w - playerSize * 2) {
-            this.x = w - playerSize * 2;
-            xSpeed = 0;
-        }
-        if (this.x < playerSize) {
-            this.x = playerSize;
-            xSpeed = 0;
-        }
-        if (this.y > h - playerSize * 2) {
-            this.y = h - playerSize * 2;
-            ySpeed = 0;
-        }
-        if (this.y < playerSize) {
-            this.y = playerSize;
-            ySpeed = 0;
-        }
     };
 
     this.moveX = function () { //Moving in terms of x position
@@ -85,5 +81,49 @@ function player() {
             }
         }
         this.x += xSpeed;
+    };
+
+    this.moveY = function () { //Moving in terms of y position
+        //87 up, 83 down
+        if (keyIsDown(87)) {
+            if (ySpeed === 0) {
+                ySpeed = ySpeedCap;
+                gravity = 0;
+            }
+        }
+        if (ySpeed === 0) {
+            if (gravity < gravityCap && gravityInc === gravityIncCap) {
+                gravity++;
+                gravityInc = 0;
+            } else if (gravityInc < gravityIncCap) {
+                gravityInc++;
+            }
+        }
+        if (ySpeed < 0 && yDec === yDecCap) {
+            ySpeed++;
+            yDec = 0;
+        } else if (yDec < yDecCap) {
+            yDec++;
+        }
+        this.y += ySpeed + gravity;
+    };
+
+    this.border = function () {
+        if (this.x > w - playerSize * 2) {
+            this.x = w - playerSize * 2;
+            xSpeed = 0;
+        }
+        if (this.x < playerSize) {
+            this.x = playerSize;
+            xSpeed = 0;
+        }
+        if (this.y > h - playerSize * 2) {
+            this.y = h - playerSize * 2;
+            ySpeed = 0;
+        }
+        if (this.y < playerSize) {
+            this.y = playerSize;
+            ySpeed = 0;
+        }
     };
 }
