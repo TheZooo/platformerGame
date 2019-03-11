@@ -1,24 +1,30 @@
 var w = window.innerWidth; //Window Width
 var h = window.innerHeight; //Window Height
-var playerSize = 20; //Player Size
-
+var playerSize = 20;
+var playerSizeX = playerSize; //Player Size
+var playerSizeY = playerSize;
+var crouchDec = 10;
+var fixedPoint = playerSize;
+var fixedSizeX = w - fixedPoint * 2;
+var fixedSizeY = h - fixedPoint * 2;
 var xSpeed = 0; //x speed that changes
 var xSpeedCapMin = -5; //x speed cap MIN
 var xSpeedCapMax = 5; //x speed cap MAX
 var xInc = 0; //x increment in speed
 var xIncCap = 2; //cap when the increment happens
-
 var ySpeed = 0;
 var ySpeedCap = -6;
 var yDec = 0;
 var yDecCap = 5;
-
+var baseJumpAmt = 1;
+var jumpAmt = baseJumpAmt;
 var gravity = 1;
 var gravityCap = 5;
 var gravityInc = 0;
 var gravityIncCap = 5;
 
 var player = new player(); //Player object
+var testBlock = new testBlock();
 
 function setup() {
     createCanvas(w, h);
@@ -29,12 +35,14 @@ function draw() {
     stroke(100);
     strokeWeight(6);
     noFill();
-    rect(playerSize, playerSize, w - playerSize * 2, h - playerSize * 2);
+    rect(fixedPoint, fixedPoint, fixedSizeX, fixedSizeY);
 
     player.display();
     player.moveX();
     player.moveY();
     player.border();
+    
+    
 
     //document.getElementById('dump').innerHTML = yDec + " " + yDecCap;
 }
@@ -46,7 +54,7 @@ function player() {
         stroke(0);
         strokeWeight(1);
         fill(48, 136, 36);
-        rect(this.x, this.y, playerSize, playerSize);
+        rect(this.x, this.y, playerSizeX, playerSizeY);
     };
 
     this.moveX = function () { //Moving in terms of x position
@@ -85,11 +93,19 @@ function player() {
 
     this.moveY = function () { //Moving in terms of y position
         //87 up, 83 down
-        if (keyIsDown(87)) {
+        if (keyIsDown(87) && jumpAmt > 0) {
             if (ySpeed === 0) {
                 ySpeed = ySpeedCap;
                 gravity = 0;
+                jumpAmt--;
             }
+        }
+        if (keyIsDown(83)) {
+          if (playerSizeY === playerSize) {
+            playerSizeY = crouchDec;
+          }
+        } else if (playerSizeY !== playerSize) {
+            playerSizeY = playerSize;
         }
         if (ySpeed === 0) {
             if (gravity < gravityCap && gravityInc === gravityIncCap) {
@@ -105,25 +121,36 @@ function player() {
         } else if (yDec < yDecCap) {
             yDec++;
         }
+        if (this.y >= fixedSizeY) {
+            jumpAmt = baseJumpAmt;
+        }
         this.y += ySpeed + gravity;
     };
 
     this.border = function () {
-        if (this.x > w - playerSize * 2) {
-            this.x = w - playerSize * 2;
+        if (this.x > fixedSizeX) {
+            this.x = fixedSizeX;
             xSpeed = 0;
         }
-        if (this.x < playerSize) {
-            this.x = playerSize;
+        if (this.x < playerSizeX) {
+            this.x = playerSizeX;
             xSpeed = 0;
         }
-        if (this.y > h - playerSize * 2) {
-            this.y = h - playerSize * 2;
+        if (this.y > fixedSizeY) {
+          if (playerSizeY === crouchDec) {
+            this.y = fixedSizeY + crouchDec;
+          } else {
+            this.y = fixedSizeY;
             ySpeed = 0;
+          }
         }
-        if (this.y < playerSize) {
-            this.y = playerSize;
+        if (this.y < playerSizeY) {
+            this.y = playerSizeY;
             ySpeed = 0;
         }
     };
+}
+
+function testBlock() {
+  
 }
