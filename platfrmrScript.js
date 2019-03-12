@@ -23,8 +23,11 @@ var gravityCap = 5;
 var gravityInc = 0;
 var gravityIncCap = 5;
 
+var randArr = [];
+var boxAmt = 6;
+
 var player = new player(); //Player object
-var testBlock = new testBlock();
+var testBlocks = new testBlocks();
 
 function setup() {
     createCanvas(w, h);
@@ -151,6 +154,6 @@ function player() {
     };
 }
 
-function testBlock() {
-  
+function testBlocks() {
+    
 }
