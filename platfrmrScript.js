@@ -23,14 +23,31 @@ var gravityCap = 5;
 var gravityInc = 0;
 var gravityIncCap = 5;
 
-var randArr = [];
-var boxAmt = 6;
+var boxPosX = [];
+var boxPosY = [];
+var boxColor = [];
+var boxSizeX = [];
+var boxSizeY = [];
+var choiceSize = [30,40,50,60];
+var boxAmt = 1;
 
 var player = new player(); //Player object
 var testBlocks = new testBlocks();
 
 function setup() {
     createCanvas(w, h);
+    for (var i = 0;i < boxAmt;i++) {
+      var randShade = (Math.floor(Math.random() * 236) + 20);
+      var randSizeX = (Math.floor(Math.random() * choiceSize.length));
+      var randSizeY = (Math.floor(Math.random() * choiceSize.length));
+      var randX = (Math.floor(Math.random() * fixedSizeX - fixedPoint) + fixedPoint);
+      var randY = (Math.floor(Math.random() * fixedSizeY - fixedPoint) + fixedPoint);
+      boxPosX.push(randX);
+      boxPosY.push(randY);
+      boxColor.push(randShade);
+      boxSizeX.push(choiceSize[randSizeX]);
+      boxSizeY.push(choiceSize[randSizeY]);
+    }
 }
 
 function draw() {
@@ -39,15 +56,16 @@ function draw() {
     strokeWeight(6);
     noFill();
     rect(fixedPoint, fixedPoint, fixedSizeX, fixedSizeY);
-
+    
+    testBlocks.activate();
     player.display();
     player.moveX();
     player.moveY();
+    player.tracker();
     player.border();
     
     
-
-    //document.getElementById('dump').innerHTML = yDec + " " + yDecCap;
+    //document.getElementById('dump').innerHTML = ;
 }
 
 function player() {
@@ -129,6 +147,13 @@ function player() {
         }
         this.y += ySpeed + gravity;
     };
+    
+    this.tracker = function () {
+      noStroke();
+      fill(20);
+      ellipseMode(CENTER);
+      ellipse(this.x + playerSizeX/2,this.y + playerSizeY/2,playerSizeX-10,playerSizeY-10);
+    }
 
     this.border = function () {
         if (this.x > fixedSizeX) {
@@ -155,5 +180,25 @@ function player() {
 }
 
 function testBlocks() {
-    
+  this.activate = function () {
+    for (var i = 0;i < boxAmt;i++) {
+      this.x = boxPosX[i];
+      this.y = boxPosY[i];
+      strokeWeight(1);
+      stroke(0);
+      fill(boxColor[i]);
+      rect(this.x,this.y,boxSizeX[i],boxSizeY[i]);
+      var boxMinX = boxPosX[i] - playerSizeX;
+      var boxMaxX = boxPosX[i] + boxSizeX[i];
+      var boxMinY = boxPosY[i] - playerSizeY;
+      var boxMaxY = boxPosY[i] + boxSizeY[i];
+      var dBox = Math.floor(dist(player.x + playerSizeX/2,player.y + playerSizeY/2,this.x,this.y));
+      line(player.x,player.y,this.x,this.y);
+      if (boxMaxX > player.x && boxMinX < player.x && boxMinY >= player.y && dBox <= playerSizeY) { //Top of the box
+        player.y = boxMinY;
+        gravity = 0;
+      }
+    }
+    document.getElementById('dump').innerHTML = dBox + " " + boxMaxX + " " + boxMinX;
+  };
 }
