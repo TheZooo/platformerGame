@@ -25,30 +25,42 @@ var gravityIncCap = 5;
 
 var boxPosX = [];
 var boxPosY = [];
-var boxColor = [];
+var boxColor = 230;
 var boxSizeX = [];
 var boxSizeY = [];
-var choiceSize = [30,40,50,60];
-var boxAmt = 1;
+var choiceSizeX = [80,100];
+var choiceSizeY = [20];
+var boxAmt = 20;
 
+var killPosX = [];
+var killPosY = [];
+var killSize = 20;
+var killSpeed = 2;
+var killDelay = 80;
+var onScreenK = 0;
+var maxOnScreenK = 20;
+
+var starter = false;
 var player = new player(); //Player object
 var testBlocks = new testBlocks();
+var killerCircles = new killerCircles();
 
 function setup() {
     createCanvas(w, h);
     for (var i = 0;i < boxAmt;i++) {
-      var randShade = (Math.floor(Math.random() * 236) + 20);
-      var randSizeX = (Math.floor(Math.random() * choiceSize.length));
-      var randSizeY = (Math.floor(Math.random() * choiceSize.length));
-      var randX = (Math.floor(Math.random() * fixedSizeX - fixedPoint) + fixedPoint);
-      var randY = (Math.floor(Math.random() * fixedSizeY - fixedPoint) + fixedPoint);
+      var randSizeX = (Math.floor(Math.random() * choiceSizeX.length));
+      var randSizeY = (Math.floor(Math.random() * choiceSizeY.length));
+      boxSizeX.push(choiceSizeX[randSizeX]);
+      boxSizeY.push(choiceSizeY[randSizeY]);
+      var randX = (Math.floor(Math.random() * fixedSizeX - boxSizeX[i]) + boxSizeX[i]);
+      var randY = (Math.floor(Math.random() * fixedSizeY - boxSizeY[i]) + boxSizeY[i]);
       boxPosX.push(randX);
       boxPosY.push(randY);
-      boxColor.push(randShade);
-      boxSizeX.push(choiceSize[randSizeX]);
-      boxSizeY.push(choiceSize[randSizeY]);
+      boxCollision.push(false);
     }
 }
+
+
 
 function draw() {
     background(245);
@@ -57,15 +69,20 @@ function draw() {
     noFill();
     rect(fixedPoint, fixedPoint, fixedSizeX, fixedSizeY);
     
-    testBlocks.activate();
-    player.display();
-    player.moveX();
-    player.moveY();
-    player.tracker();
-    player.border();
-    
-    
-    //document.getElementById('dump').innerHTML = ;
+    if (starter === true) {
+      testBlocks.activate();
+      killerCircle.activate();
+      player.display();
+      player.moveX();
+      player.moveY();
+      player.tracker();
+      player.border();
+    }
+}
+
+function start() {
+  starter = true;
+  document.getElementById('bttn').style.display = "none";
 }
 
 function player() {
@@ -151,7 +168,6 @@ function player() {
     this.tracker = function () {
       noStroke();
       fill(20);
-      ellipseMode(CENTER);
       ellipse(this.x + playerSizeX/2,this.y + playerSizeY/2,playerSizeX-10,playerSizeY-10);
     }
 
@@ -186,19 +202,48 @@ function testBlocks() {
       this.y = boxPosY[i];
       strokeWeight(1);
       stroke(0);
-      fill(boxColor[i]);
+      fill(boxColor);
       rect(this.x,this.y,boxSizeX[i],boxSizeY[i]);
-      var boxMinX = boxPosX[i] - playerSizeX;
-      var boxMaxX = boxPosX[i] + boxSizeX[i];
-      var boxMinY = boxPosY[i] - playerSizeY;
-      var boxMaxY = boxPosY[i] + boxSizeY[i];
-      var dBox = Math.floor(dist(player.x + playerSizeX/2,player.y + playerSizeY/2,this.x,this.y));
-      line(player.x,player.y,this.x,this.y);
-      if (boxMaxX > player.x && boxMinX < player.x && boxMinY >= player.y && dBox <= playerSizeY) { //Top of the box
-        player.y = boxMinY;
-        gravity = 0;
+      var collision = collideRectRect(player.x,player.y,playerSizeX,playerSizeY,this.x,this.y,boxSizeX[i],boxSizeY[i]);
+      if (collision === true) {
+        if (player.y < boxPosY[i]) {
+          player.y = this.y - playerSizeY;
+          gravity = 0;
+          jumpAmt = baseJumpAmt + 1;
+        }
+        if (player.y > boxPosY[i]) {
+          ySpeed = 0;
+        }
+        if (player.x < boxPosX[i] - playerSizeX) {
+          xSpeed = 0;
+        }
+        if (player.x > boxPosX[i] + boxSizeX[i]) {
+          xSpeed = 0;
+        }
       }
     }
-    document.getElementById('dump').innerHTML = dBox + " " + boxMaxX + " " + boxMinX;
+  };
+}
+
+function killerCircles() {
+  this.activate = function() {
+    if (onScreenK < maxOnScreenK) {
+      if (killDelay < 0) {
+        var randX = Math.floor(Math.random() * 2);
+        var randY = Math.floor(Math.random() * fixedSizeY - killSize*2) + killSize;
+        if (randX === 1) {
+          randX = w;
+        }
+        killPosX.push(randX);
+        killPosY.push(randY);
+      } else if (killDelay > 0) {
+        killDelay--;
+      }
+      for (var i = 0;i < onScreenK;i++) {
+        stroke(0);
+        strokeWeight(1);
+        fill(255,0,0);
+      }
+    }
   };
 }
