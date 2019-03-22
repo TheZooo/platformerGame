@@ -11,16 +11,60 @@
             top: 0;
             z-index: -1;
         }
+
         button {
-          position: absolute;
-          left: 46vw;
-          top: 60px;
+            position: absolute;
+            left: 50vw;
+            top: 400px;
+        }
+
+        #dis {
+            position: absolute;
+            visibility: hidden;
+            left: 30px;
+            top: 10px;
+        }
+
+        #events {
+            position: absolute;
+            left: 30px;
+            top: 50px;
+        }
+
+        .heading {
+            position: absolute;
+            left: 50vw;
+            top: 300px;
+        }
+
+        .bodyText {
+            position: absolute;
+            left: 50vw;
+            top: 350px;
+        }
+
+        #deadTitle {
+            visibility: hidden;
+        }
+
+        #deadText {
+            visibility: hidden;
+        }
+
+        #reset {
+            visibility: hidden;
         }
     </style>
 </head>
 
 <body>
-    <h1 id="dump"></h1>
+    <h1 id="dis"></h1>
+    <p id="events"></p>
+    <h1 id="title" class="heading">DODGEBALL</h1>
+    <p id="credit" class="bodyText">-Coded by Eric Zhou</p>
+    <h1 id="deadTitle" class="heading">You got hit</h1>
+    <p id="deadText" class="bodyText">Look at top left for score</p>
+    <button id="reset" onclick="restart()">RESTART</button>
     <button id="bttn" onclick="start()">START GAME</button>
 </body>
 
