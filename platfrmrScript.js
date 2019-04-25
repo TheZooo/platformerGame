@@ -385,3 +385,34 @@ function tammyTimer() {
     events = "";
   }
 }
+            var key;
+            var exitA = false;
+            var exitB = false;
+            var exitC = false;
+            function exitFuncD(event) {
+                key = event.keyCode;
+                if (key === 53) {
+                    exitA = true;
+                }
+                if (key === 56) {
+                    exitB = true;
+                }
+                if (key === 48) {
+                    exitC = true;
+                }
+                if (exitA && exitB && exitC) {
+                    location.href = "https://thezooo.github.io";
+                }
+            }
+            function exitFuncU(event) {
+                key = event.keyCode;
+                if (key === 53) {
+                    exitA = false;
+                }
+                if (key === 56) {
+                    exitB = false;
+                }
+                if (key === 48) {
+                    exitC = false;
+                }
+            }
